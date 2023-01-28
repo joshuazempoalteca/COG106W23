@@ -1,6 +1,1 @@
-date
-date +"%FORMAT"
-var=$(date)
-var=`date`
-echo "$var"
-
+now = Fri Jan 27 16:07:36 PST 2023
