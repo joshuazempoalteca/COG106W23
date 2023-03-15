@@ -24,21 +24,6 @@ classdef Metropolis < handle
             
         end
         
-        function 
-        end
-
-        function 
-        end
-
-        function 
-        end
-
-        function 
-        end
-   
-        function 
-        end
-        
     end
     
     methods (private) 
