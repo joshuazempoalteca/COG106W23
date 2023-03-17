@@ -1,4 +1,3 @@
-
 %% Simulate signal detection data
 sdtList = SignalDetection.simulate(1, [-1, 0, 1], 40, 40);
 
