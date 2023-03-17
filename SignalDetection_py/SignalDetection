@@ -1,0 +1,78 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
+class SignalDetection:
+    def __init__(self, hits, misses, falseAlarms, correctRejections):
+        self.hits = hits
+        self.misses = misses
+        self.falseAlarms = falseAlarms
+        self.correctRejections = correctRejections
+
+    def hit_rate(self):
+        return self.hits / (self.hits + self.misses)
+
+    def FA(self):
+        return self.falseAlarms / (self.falseAlarms + self.correctRejections)
+
+    def d_prime(self):
+        hr = self.hit_rate()
+        far = self.FA()
+        return norm.ppf(hr) - norm.ppf(far)
+
+    def criterion(self):
+        hr = self.hit_rate()
+        far = self.FA()
+        return - (norm.ppf(hr) + norm.ppf(far)) / 2
+
+    def __add__(self, other):
+        return SignalDetection(self.hits + other.hits, self.misses + other.misses, self.falseAlarms + other.falseAlarms, self.correctRejections + other.correctRejections)
+
+    def __mul__(self, k):
+        return SignalDetection(self.hits * k, self.misses * k, self.falseAlarms * k, self.correctRejections * k)
+
+    def plot_sdt(self):
+        x = np.linspace(-4, 4, 200)
+        Noise = norm.pdf(x, 0, 1)
+        Signal = norm.pdf(x, self.d_prime(), 1)
+
+        plt.plot(x, Noise)
+        plt.plot(x, Signal)
+        plt.ylim([0, 0.5])
+        plt.axvline((self.d_prime() / 2) + self.criterion(), linestyle='--', color='k')
+        plt.plot([0, self.d_prime()], [np.max(Noise), np.max(Signal)])
+        plt.legend(['Noise', 'Signal'])
+        plt.show()
+
+    def nLogLikelihood(self, hit_rate, false_alarm_rate):
+        return - (self.hits * np.log(hit_rate) + self.misses * np.log(1-hit_rate) + self.falseAlarms * np.log(false_alarm_rate) + self.correctRejections * np.log(1-false_alarm_rate))
+
+    @staticmethod
+    def simulate(dprime, criteriaList, signalcount, noiseCount):
+        sdtList = []
+        for i in range(len(criteriaList)):
+            k = criteriaList[i] + (dprime / 2)
+            hit_rate = 1 - (norm.cdf(k - dprime))
+            FA_rate = 1 - (norm.cdf(k))
+
+            Hits = np.random.binomial(signalcount, hit_rate)
+            Misses = signalcount - Hits
+            fas = np.random.binomial(noiseCount, FA_rate)
+            correct_Rejection = noiseCount - fas
+
+            sdtList.append(SignalDetection(Hits, Misses, fas, correct_Rejection))
+        return sdtList
+
+    @staticmethod
+    def plot_roc(sdtList):
+        plt.figure()
+        plt.plot([0, 1], [0, 1], '--', color=[0.5, 0.5, 0.5])
+        plt.ylim([0, 1])
+        plt.xlim([0, 1])
+        plt.xlabel('False Alarm Rate')
+        plt.ylabel('Hit Rate')
+        plt.title('ROC Curve')
+        for i in range(len(sdtList)):
+            sdt = sdtList[i]
+            plt.plot(sdt.FA(), sdt.hit_rate(), 'o')
+        plt.show()
