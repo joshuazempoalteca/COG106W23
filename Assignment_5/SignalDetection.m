@@ -81,7 +81,7 @@ classdef SignalDetection < handle
             end
         end
         
-        function plot_roc = plot_roc(sdtList)
+        function plot_roc(sdtList)
             figure
             hold on;
            for i=1:length(sdtList)
@@ -99,7 +99,7 @@ classdef SignalDetection < handle
            title('ROC Curve')
         end
         
-        function hit_rate = roc_curve(false_alarm_rate, a)
+        function hit_rate = rocCurve(false_alarm_rate, a)
             hit_rate = zeros(1, length(false_alarm_rate));
             for i =1:length(false_alarm_rate)
              hit_rate = normcdf(a + norminv(false_alarm_rate));
@@ -111,7 +111,7 @@ classdef SignalDetection < handle
             ell = [];
             for i=1:length(sdtList)
                 FA_rate = FA(sdtList(i));
-                hit_rate = SignalDetection.roc_curve(FA_rate, a);
+                hit_rate = SignalDetection.rocCurve(FA_rate, a);
             
                 ell = [ell; nLogLikelihood(sdtList(i), hit_rate, FA_rate)];
             end

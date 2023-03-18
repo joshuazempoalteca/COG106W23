@@ -2,9 +2,7 @@ classdef Metropolis < handle
     properties
         currentState
         logTarget
-        sig
         samples
-        blockLengths
     end
     
     methods (Access = private)
@@ -25,25 +23,26 @@ classdef Metropolis < handle
             self.currentState = initialState;
         end
         
-        function self = adapt(self)
+        function self = adapt(self, blockLengths)
+            sig = 1;
             acceptanceTarget = 0.4;
             gamma = 0.05;
-            numBlocks = numel(self.blockLengths);
-            acceptanceRates = zeros(1, numBlocks);
+            blockLengths = numel(blockLengths);
+            acceptanceRates = zeros(1, blockLengths);
             
-            for i = 1:numBlocks
-                for j = 1:self.blockLengths(i)
-                    proposal = normrnd(self.currentState, self.sig);
+            for i = 1:length(blockLengths)
+                for j = 1:blockLengths(i)
+                    proposal = normrnd(self.currentState, 1);
                     if self.accept(proposal)
                         acceptanceRates(i) = acceptanceRates(i) + 1;
                     end
                 end
-                acceptanceRates(i) = acceptanceRates(i) / self.blockLengths(i);
+                acceptanceRates(i) = acceptanceRates(i) / blockLengths(i);
                 
                 if acceptanceRates(i) < acceptanceTarget
-                    self.sig = self.sig * (1 - gamma);
+                    sig = 1 * (1 - gamma);
                 else
-                    self.sig = self.sig * (1 + gamma);
+                    sig = 1 * (1 + gamma);
                 end
             end
         end
@@ -51,7 +50,7 @@ classdef Metropolis < handle
         function self = sample(self, n)
             self.samples = zeros(1, n);
             for i = 1:n
-                proposal = normrnd(self.currentState, self.sig);
+                proposal = normrnd(self.currentState, 1);
                 if self.accept(proposal)
                     self.samples(i) = proposal;
                 else
