@@ -41,7 +41,7 @@ classdef SignalDetection < handle
                 obj.falseAlarms * k, obj.correctRejections * k);
         end
 
-        function plot_sdt = plot_sdt(obj)
+        function plot_sdt(obj)
             x = linspace(-4,4,200);
             Noise = normpdf(x, 0, 1);
             Signal = normpdf(x,obj.d_prime(),1);
@@ -82,15 +82,15 @@ classdef SignalDetection < handle
         end
         
         function plot_roc(sdtList)
-            figure
-            hold on;
+            %figure %possibility here
+            hold on; %possibility here
            for i=1:length(sdtList)
                sdt = sdtList(i);
                hit_rate = sdt.hits ./ (sdt.hits + sdt.misses);
                FA = sdt.falseAlarms ./ (sdt.falseAlarms + sdt.correctRejections);
                plot(FA, hit_rate, 'o-')
            end
-           plot([0 1], [0 1], '--','Color', [0.5 0.5 0.5])
+           plot([0 1], [0 1], '--','Color', [0.5 0.5 0.5]) %possibility here?
            ylim([0, 1]);
            xlim([0, 1]);
 
@@ -117,7 +117,7 @@ classdef SignalDetection < handle
              L = sum(ell);
         end
 
-        function fit_roc = fit_roc(sdtList) %use fminsearch() here
+        function fit_roc = fit_roc(sdtList) 
             fun = @(a) SignalDetection.rocLoss(a,sdtList);
             
             start = 0;
@@ -125,18 +125,15 @@ classdef SignalDetection < handle
             
             x = linspace(0,1);
             y = SignalDetection.rocCurve(x, fit_roc);
-            %disp(hit_rate)
             SignalDetection.plot_roc(sdtList)
             hold on;
             plot(x, y)
         end
-        
 
         function obj = load(filename)
             saved = load(filename);
             obj = saved.obj;
         end
-        %}
     end
 
 end
