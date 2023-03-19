@@ -104,7 +104,6 @@ classdef SignalDetection < handle
             for i =1:length(false_alarm_rate)
              hit_rate = normcdf(a + norminv(false_alarm_rate));
             end
-         %dleted loop here, revert if not fixed
         end 
 
         function L = rocLoss(a, sdtList)
@@ -125,7 +124,7 @@ classdef SignalDetection < handle
             fit_roc = fminsearch(fun,start);
             
             x = linspace(0,1);
-            y = SignalDetection.roc_curve(x, fit_roc);
+            y = SignalDetection.rocCurve(x, fit_roc);
             %disp(hit_rate)
             SignalDetection.plot_roc(sdtList)
             hold on;

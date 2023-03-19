@@ -28,7 +28,7 @@ rocCurve025 = SignalDetection.rocCurve(xaxis, result.c025);
 rocCurve975 = SignalDetection.rocCurve(xaxis, result.c975);
 
 % Plot the ROC curve
-subplot(2, 3, [1 2 4 5]);
+subplot(2, 3, [1 2 4 5]); %error occurs here and one line below
 SignalDetection.plot_roc(sdtList);
 hold on;
 patch([xaxis fliplr(xaxis)], [rocCurve025 fliplr(rocCurve975)], ...
