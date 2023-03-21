@@ -47,7 +47,7 @@ classdef Metropolis < handle
             end
         end
         
-        function self = sample(self, n)
+        function self = sample(self, n) %error is in here
             self.samples = zeros(1, n);
             for i = 1:n
                 proposal = normrnd(self.currentState, 1);
@@ -57,6 +57,8 @@ classdef Metropolis < handle
                     self.samples(i) = self.currentState;
                 end
             end
+           
+
         end
         
         function summary = summary(self)
