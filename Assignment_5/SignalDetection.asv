@@ -63,7 +63,7 @@ classdef SignalDetection < handle
         
     end
     
-    methods (Static) 
+    methods (Static) %plot_roc, roc_curve, fit_roc, roc_loss
         function sdtList = simulate(dprime, criteriaList,signalcount, noiseCount)
             sdtList = [];
             for i=1:length(criteriaList)

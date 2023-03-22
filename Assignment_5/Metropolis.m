@@ -7,8 +7,8 @@ classdef Metropolis < handle
     
     methods (Access = private)
         function accepted = accept(self, proposal)
-            acceptanceProbability = exp(self.logTarget(proposal) - self.logTarget(self.currentState));
-            if rand() < acceptanceProbability
+            acceptanceProbability = min(0,self.logTarget(proposal) - self.logTarget(self.currentState));
+            if log(rand()) < acceptanceProbability
                 self.currentState = proposal;
                 accepted = true;
             else
@@ -27,10 +27,10 @@ classdef Metropolis < handle
             sig = 1;
             acceptanceTarget = 0.4;
             gamma = 0.05;
-            blockLengths = numel(blockLengths);
-            acceptanceRates = zeros(1, blockLengths);
+            blockAmount = numel(blockLengths);
+            acceptanceRates = zeros(1, blockAmount);
             
-            for i = 1:length(blockLengths)
+            for i = 1:blockAmount
                 for j = 1:blockLengths(i)
                     proposal = normrnd(self.currentState, 1);
                     if self.accept(proposal)
@@ -44,10 +44,11 @@ classdef Metropolis < handle
                 else
                     sig = 1 * (1 + gamma);
                 end
+                
             end
         end
         
-        function self = sample(self, n) %error is in here
+        function self = sample(self, n) 
             self.samples = zeros(1, n);
             for i = 1:n
                 proposal = normrnd(self.currentState, 1);
