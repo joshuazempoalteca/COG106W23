@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+import math
 
 
 class SignalDetection:
@@ -11,20 +12,23 @@ class SignalDetection:
         self.correctRejections = correctRejections
 
     def hit_rate(self):
-        return self.hits / (self.hits + self.misses)
+        hit_rate = self.hits / (self.hits + self.misses)
+        return hit_rate
 
     def FA(self):
-        return self.falseAlarms / (self.falseAlarms + self.correctRejections)
+        fa_rate = self.falseAlarms / (self.falseAlarms + self.correctRejections)
+        return fa_rate
 
     def d_prime(self):
-        hr = self.hit_rate()
-        far = self.FA()
-        return norm.ppf(hr) - norm.ppf(far)
+        hit_rate = self.hit_rate()
+        fa_rate = self.FA()
+        d_prime = norm.ppf(hit_rate) - norm.ppf(fa_rate)
+        return d_prime
 
     def criterion(self):
-        hr = self.hit_rate()
-        far = self.FA()
-        return - (norm.ppf(hr) + norm.ppf(far)) / 2
+        hit_rate = self.hit_rate()
+        fa_rate = self.FA()
+        return - (norm.pdf(hit_rate) + norm.pdf(fa_rate)) / 2
 
     def __add__(self, other):
         return SignalDetection(self.hits + other.hits, self.misses + other.misses, self.falseAlarms + other.falseAlarms, self.correctRejections + other.correctRejections)
