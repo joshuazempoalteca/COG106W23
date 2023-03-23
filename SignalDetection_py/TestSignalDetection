@@ -2,16 +2,10 @@ import numpy as np
 import unittest
 import matplotlib.pyplot as plt
 import unittest
-
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import norm
-
-
-import numpy as np
-import matplotlib.pyplot as plt
+import scipy
 from scipy.stats import norm
 import math
+
 
 
 class SignalDetection:
@@ -91,6 +85,36 @@ class SignalDetection:
             sdt = sdtList[i]
             plt.plot(sdt.FA(), sdt.hit_rate(), 'o')
         plt.show()
+
+    @staticmethod
+    def rocCurve(falseAlarmRate, a):
+        # compute the predicted hit rate based on false alarm rate
+        hitRate = scipy.stats.norm.cdf(
+        a + scipy.stats.norm.ppf(falseAlarmRate))
+        return (hitRate)
+
+    @staticmethod
+    def rocLoss(a, sdtList):
+        # calculate the log-liklihood for each predicted hit rate to the observed false alarm rate
+        loss = 0
+        for sdt in sdtList:
+            loss += sdt.nLogLikelihood(SignalDetection.rocCurve(
+                sdt.falseAlarmRate, a), sdt.falseAlarmRate)
+        return (loss)
+
+    @staticmethod
+    def fit_roc(sdtList):
+        optimization_result = scipy.optimize.minimize(fun=SignalDetection.rocLoss, x0=0, args=(sdtList,))
+        a_hat = optimization_result.x[0]
+        falsesAlarms = np.arange(0, 1, 0.01)
+        hitRates = SignalDetection.rocCurve(falsesAlarms, a_hat)
+        
+        plt.plot(falsesAlarms, hitRates, 'r')
+        plt.xlabel("False Alarm Rate")
+        plt.ylabel("Hit rate")
+        plt.title("ROC curve")
+        plt.show()
+        return (a_hat)
 
 
 
