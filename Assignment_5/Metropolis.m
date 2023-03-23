@@ -32,7 +32,7 @@ classdef Metropolis < handle
             
             for i = 1:blockAmount
                 for j = 1:blockLengths(i)
-                    proposal = normrnd(self.currentState, 1);
+                    proposal = normrnd(self.currentState, sig);
                     if self.accept(proposal)
                         acceptanceRates(i) = acceptanceRates(i) + 1;
                     end

@@ -8,16 +8,16 @@ logPosterior = @(a) -SignalDetection.rocLoss(a, sdtList) + ...
 %% Initialize Metropolis-Hastings sampler with initial state 0
 sampler = Metropolis(logPosterior, 0);
 
-% Adapt the sampler
+%% Adapt the sampler
 sampler = sampler.adapt([2000 2000 2000]);
 
-% Sample from the posterior distribution
+%% Sample from the posterior distribution
 sampler = sampler.sample(4000);
 
-% Compute summary statistics
+%% Compute summary statistics
 result = sampler.summary();
 
-% Print the estimated value of a with 95% credible interval
+%% Print the estimated value of a with 95% credible interval
 fprintf('Estimated a: %f (%f, %f)\n', ...
     result.mean, result.c025, result.c975);
 
@@ -27,7 +27,7 @@ rocCurve    = SignalDetection.rocCurve(xaxis, result.mean);
 rocCurve025 = SignalDetection.rocCurve(xaxis, result.c025);
 rocCurve975 = SignalDetection.rocCurve(xaxis, result.c975);
 
-% Plot the ROC curve
+%% Plot the ROC curve
 subplot(2, 3, [1 2 4 5]); 
 SignalDetection.plot_roc(sdtList);
 hold on;
@@ -41,14 +41,14 @@ title('ROC curve');
 ylabel('Hit Rate');
 xlabel('False Positive Rate');
 
-% Plot the traceplot
+%% Plot the traceplot
 subplot(2, 3, 3);
 plot(sampler.samples);
 title('Trace plot');
 xlabel('iteration');
 ylabel('a');
 
-% Plot the posterior histogram
+%% Plot the posterior histogram
 subplot(2, 3, 6);
 histogram(sampler.samples, 'Normalization', 'pdf', 'BinWidth', 0.05);
 title('Histogram');
