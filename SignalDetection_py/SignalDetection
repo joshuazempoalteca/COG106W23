@@ -22,13 +22,13 @@ class SignalDetection:
     def d_prime(self):
         hit_rate = self.hit_rate()
         fa_rate = self.FA()
-        d_prime = norm.ppf(hit_rate) - norm.ppf(fa_rate)
+        d_prime = norm.cdf(hit_rate) - norm.cdf(fa_rate)
         return d_prime
 
     def criterion(self):
         hit_rate = self.hit_rate()
         fa_rate = self.FA()
-        return - (norm.pdf(hit_rate) + norm.pdf(fa_rate)) / 2
+        return - (norm.cdf(hit_rate) + norm.cdf(fa_rate)) / 2
 
     def __add__(self, other):
         return SignalDetection(self.hits + other.hits, self.misses + other.misses, self.falseAlarms + other.falseAlarms, self.correctRejections + other.correctRejections)
