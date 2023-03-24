@@ -40,7 +40,7 @@ classdef Metropolis < handle
                 acceptanceRates(i) = acceptanceRates(i) / blockLengths(i);
                 
                 if acceptanceRates(i) < acceptanceTarget
-                    sig = 1 * (1 - gamma);
+                    sig = 1 * (1 - ((acceptanceRates/0.4)^1.1));
                 else
                     sig = 1 * (1 + gamma);
                 end
