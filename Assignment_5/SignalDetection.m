@@ -25,17 +25,17 @@ classdef SignalDetection < handle
         function d_prime = d_prime(obj)
             d_prime = norminv(hit_rate(obj)) - norminv(obj.FA());
         end
-        
+     
         function C = criterion(obj)
           C =  -0.5 *(norminv(obj.hit_rate()) + norminv(obj.FA())); 
         end
-
+        % Add two SignalDetection objects
         function summation = plus(obj1, obj2)
             summation = SignalDetection(obj1.hits + obj2.hits, obj1.misses + ...
                 obj2.misses, obj1.falseAlarms + obj2.falseAlarms, ...
                 obj1.correctRejections + obj2.correctRejections);
         end
-
+        % Multiply a SignalDetection object by a scalar
         function scaled = mtimes(obj, k)
             scaled = SignalDetection(obj.hits * k, obj.misses * k, ...
                 obj.falseAlarms * k, obj.correctRejections * k);
@@ -74,7 +74,10 @@ classdef SignalDetection < handle
                 Hits = binornd(signalcount, hit_Rate);
                 Misses = signalcount - Hits;
 
-                fas = binornd(noiseCount, FA_rate);
+                fas = round(binornd(noiseCount, FA_rate), 2);
+                while fas == 0 %keep doing it
+                    fas = round(binornd(noiseCount, FA_rate), 2); 
+                end
                 correct_Rejection = noiseCount - fas;
 
                 sdtList = [sdtList; SignalDetection(Hits, Misses, fas, correct_Rejection)];

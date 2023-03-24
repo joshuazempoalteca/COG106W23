@@ -26,7 +26,7 @@ classdef Metropolis < handle
         function self = adapt(self, blockLengths)
             sig = 1;
             acceptanceTarget = 0.4;
-            gamma = 0.05;
+            k = 0.1;
             blockAmount = numel(blockLengths);
             acceptanceRates = zeros(1, blockAmount);
             
@@ -40,9 +40,7 @@ classdef Metropolis < handle
                 acceptanceRates(i) = acceptanceRates(i) / blockLengths(i);
                 
                 if acceptanceRates(i) < acceptanceTarget
-                    sig = 1 * (1 - ((acceptanceRates/acceptanceTarget).^1.1));
-                else
-                    sig = 1 * (1 + gamma);
+                    sig = sig * exp((acceptanceRates(i) - acceptanceTarget)/k);
                 end
                 
             end
@@ -58,8 +56,6 @@ classdef Metropolis < handle
                     self.samples(i) = self.currentState;
                 end
             end
-           
-
         end
         
         function summary = summary(self)
